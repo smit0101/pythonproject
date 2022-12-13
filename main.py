@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+from sklearn import metrics
+import numpy as np
+
 
 
 
@@ -145,17 +148,42 @@ def main():
     lmpt = sns.lmplot(x='Walc', y='Dalc', data=df_selection)
     st.pyplot(lmpt)
 
-    y = df_selection['G1']
+    y1 = df_selection['G1']
+    y2 = df_selection['G2']
+    y3 = df_selection['G3']
+
     x = df_selection[['studytime', 'freetime', 'absences', 'Dalc', 'health', 'failures' ]]
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.25, random_state=0)
+    x_train, x_test, y1_train, y1_test = train_test_split(x, y1, train_size=0.80, random_state=0)
+
+    # Training data using G1
     lg = LinearRegression()
-    lg.fit(x_train,y_train)
+    lg.fit(x_train, y1_train)
     st.write(lg.coef_)
-    predictions = lg.predict(x_test)
-    ans = plt.scatter(y_test,predictions)
+    predictions1 = lg.predict(x_test)
+
+    # testing our prediction against y1(G1)
+    ans1 = plt.scatter(y1_test, predictions1)
+
+    # testing the same model over y2(G2)
+    x_train, x_test, y2_train, y2_test = train_test_split(x, y2, train_size=0.80, random_state=0)
+    predictions2 = lg.predict(x_test)
+    # this will tell how much good our model is for y2(G2) as well
+    # ans2 = plt.scatter(y2_train, predictions2)
+
+    # For predicting over y3(G3) it is mentioned to train first over y1 and y2.
+    lg.fit(x_train, y2_train)
+    x_train, x_test, y3_train, y3_test = train_test_split(x, y3, train_size=0.80, random_state=0)
+    predictions3 = lg.predict(x_test)
+    ans3 = plt.scatter(y3_test, predictions3)
+
+    # Let see how much error we were having
+    st.write(np.sqrt(metrics.mean_squared_error(y1_test, predictions1)))
+    st.write(np.sqrt(metrics.mean_squared_error(y2_test, predictions2)))
+    st.write(np.sqrt(metrics.mean_squared_error(y3_test, predictions3)))
+
     plt.xlabel('y test')
     plt.ylabel('Predicted')
-    st.pyplot(ans)
+    #st.pyplot(ans)
 
 if __name__ == '__main__':
     main()
