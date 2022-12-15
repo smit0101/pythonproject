@@ -15,6 +15,7 @@ import numpy as np
 
 
 
+#streamlit run main.py
 
 def main():
     st.set_page_config(page_title="Students Marks Prediction",
@@ -63,7 +64,9 @@ def main():
         "sex == @sex & famsize == @famsize & Pstatus == @pstatus & Mjob == @mjob & Fjob == @fjob"
     )
 
+    st.title(f"Columns Present In The DataSet Total {len(df_selection.columns)}")
     st.write(df_selection.columns)
+    st.title("Complete View Of Selected DataSet")
     st.dataframe(df_selection)
 
 
@@ -121,7 +124,7 @@ def main():
         y= "G1",
         orientation="v",
         title="<b>G1 By StudyTime</b>",
-        color_discrete_sequence=["#0083B8"]*len(df_selection),
+        color_discrete_sequence=["#0083B8"]*len(df_selection['G1']),
         template="plotly_white"
     )
     st.title("Bar Chart")
@@ -140,14 +143,34 @@ def main():
     st.write(px.density_heatmap(df_selection,x="studytime",y="failures"))
     st.title("Heatmap Freetime | Failures")
     st.write(px.density_heatmap(df_selection, x="freetime", y="failures"))
-    st.title("Heatmap Romantic | Studytime")
-    st.write(px.density_heatmap(df_selection, x="romantic", y="studytime"))
-    st.title("Pairplot")
-    st.pyplot(sns.pairplot(data=df_selection,x_vars=["studytime","freetime","health", "age","Dalc", "Walc"],y_vars=["G1","G2","G3"]))
-    st.title("Studytime Vs FreeTime")
-    lmpt = sns.lmplot(x='Walc', y='Dalc', data=df_selection)
-    st.pyplot(lmpt)
+    st.title("Heatmap Absences | Failures")
+    st.write(px.density_heatmap(df_selection, x="absences", y="failures"))
+    #st.write(px.density_heatmap(df_selection[['age', 'Medu', 'Fedu', 'traveltime','studytime', 'failures','famrel', 'freetime', 'goout', 'Dalc', 'Walc','health', 'absences', 'G1', 'G2', 'G3']],))
 
+    st.title("Pairplot")
+    st.pyplot(sns.pairplot(data=df_selection,x_vars=["studytime","freetime","health", "age","Dalc", "Walc", "absences", "G1", "G2", "G3"],y_vars=["G1","G2","G3"]))
+
+    st.title("Studytime Vs G1")
+    lmpt = sns.lmplot(x='studytime', y='G1', data=df_selection)
+    st.pyplot(lmpt)
+    st.title("Studytime Vs G2")
+    lmpt1 = sns.lmplot(x='studytime', y='G2', data=df_selection)
+    st.pyplot(lmpt1)
+    st.title("Studytime Vs G3")
+    lmpt2 = sns.lmplot(x='studytime', y='G3', data=df_selection)
+    st.pyplot(lmpt2)
+    st.title("G1 Vs G3")
+    lmpt3 = sns.lmplot(x='G1', y='G3', data=df_selection)
+    st.pyplot(lmpt3)
+    st.title("G1 Vs G2")
+    lmpt3 = sns.lmplot(x='G1', y='G2', data=df_selection)
+    st.pyplot(lmpt3)
+
+
+
+
+
+    # Model Train Test and Linear Regression Below
     y1 = df_selection['G1']
     y2 = df_selection['G2']
     y3 = df_selection['G3']
@@ -162,28 +185,36 @@ def main():
     predictions1 = lg.predict(x_test)
 
     # testing our prediction against y1(G1)
-    ans1 = plt.scatter(y1_test, predictions1)
+    st.title("Scatter Plot Of Y1 Test values VS Predicted Values")
+    st.title("X = Y1 Test, Y=Prediction1")
+    fig1 = px.scatter(x=y1_test, y=predictions1)
+    st.plotly_chart(fig1)
 
     # testing the same model over y2(G2)
     x_train, x_test, y2_train, y2_test = train_test_split(x, y2, train_size=0.80, random_state=0)
     predictions2 = lg.predict(x_test)
-    # this will tell how much good our model is for y2(G2) as well
-    # ans2 = plt.scatter(y2_train, predictions2)
+    st.title("Scatter Plot Of Y2 Test values VS Predicted Values")
+    st.title("X = Y2 Test, Y=Prediction2")
+    fig2 = px.scatter(x=y2_test, y=predictions2)
+    st.plotly_chart(fig2)
+
 
     # For predicting over y3(G3) it is mentioned to train first over y1 and y2.
     lg.fit(x_train, y2_train)
     x_train, x_test, y3_train, y3_test = train_test_split(x, y3, train_size=0.80, random_state=0)
     predictions3 = lg.predict(x_test)
-    ans3 = plt.scatter(y3_test, predictions3)
+    st.title("Scatter Plot Of Y1 Test values VS Predicted Values")
+    st.title("X = Y3 Test, Y=Prediction3")
+    fig3 = px.scatter(x=y3_test,y=predictions3)
+    st.plotly_chart(fig3)
+
+
 
     # Let see how much error we were having
-    st.write(np.sqrt(metrics.mean_squared_error(y1_test, predictions1)))
-    st.write(np.sqrt(metrics.mean_squared_error(y2_test, predictions2)))
-    st.write(np.sqrt(metrics.mean_squared_error(y3_test, predictions3)))
 
-    plt.xlabel('y test')
-    plt.ylabel('Predicted')
-    #st.pyplot(ans)
+    st.title(f"RMSE Y1 Test, Prediction1:  {np.sqrt(metrics.mean_squared_error(y1_test, predictions1))}")
+    st.title(f"RMSE Y2 Test, Prediction2:  {np.sqrt(metrics.mean_squared_error(y2_test, predictions2))}")
+    st.title(f"RMSE Y3 Test, Prediction3:  {np.sqrt(metrics.mean_squared_error(y3_test, predictions3))}")
 
 if __name__ == '__main__':
     main()
