@@ -7,6 +7,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn import metrics
 import numpy as np
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import  r2_score
 
 
 
@@ -171,43 +173,64 @@ def main():
 
 
     # Model Train Test and Linear Regression Below
+
+
+    x = df_selection[['studytime', 'traveltime', 'absences', 'Dalc', 'health', 'failures', 'G1']]
     y1 = df_selection['G1']
     y2 = df_selection['G2']
     y3 = df_selection['G3']
 
-    x = df_selection[['studytime', 'freetime', 'absences', 'Dalc', 'health', 'failures' ]]
+    lg = LinearRegression()
+    rf = RandomForestRegressor(n_estimators=500,bootstrap=True,max_depth=50,max_features=4,min_samples_leaf=7,min_samples_split=10)
     x_train, x_test, y1_train, y1_test = train_test_split(x, y1, train_size=0.80, random_state=0)
 
-    # Training data using G1
-    lg = LinearRegression()
     lg.fit(x_train, y1_train)
-    st.write(lg.coef_)
-    predictions1 = lg.predict(x_test)
+    rf.fit(x_train,y1_train)
 
+    st.write(lg.coef_)
+
+    predictions1 = lg.predict(x_test)
+    rf_predictions1 = rf.predict(x_test)
     # testing our prediction against y1(G1)
-    st.title("Scatter Plot Of Y1 Test values VS Predicted Values")
+    st.title("Scatter Plot Of Y1 Test values VS Predicted Values | LinearRegression Model")
     st.title("X = Y1 Test, Y=Prediction1")
     fig1 = px.scatter(x=y1_test, y=predictions1)
     st.plotly_chart(fig1)
 
+    st.title("Scatter Plot Of Y1 Test values VS Predicted Values | RandomForestRegressor")
+    st.title("X = Y1 Test, Y=RF_Prediction1")
+    rf_fig1 = px.scatter(x=y1_test, y=rf_predictions1)
+    st.plotly_chart(rf_fig1)
+
     # testing the same model over y2(G2)
     x_train, x_test, y2_train, y2_test = train_test_split(x, y2, train_size=0.80, random_state=0)
     predictions2 = lg.predict(x_test)
-    st.title("Scatter Plot Of Y2 Test values VS Predicted Values")
+    rf_predictions2 = rf.predict(x_test)
+    st.title("Scatter Plot Of Y2 Test values VS Predicted Values | LinearRegression Model")
     st.title("X = Y2 Test, Y=Prediction2")
     fig2 = px.scatter(x=y2_test, y=predictions2)
     st.plotly_chart(fig2)
+
+    st.title("Scatter Plot Of Y1 Test values VS Predicted Values | RandomForestRegressor")
+    st.title("X = Y2 Test, Y=RF_Prediction2")
+    rf_fig2 = px.scatter(x=y1_test, y=rf_predictions2)
+    st.plotly_chart(rf_fig2)
 
 
     # For predicting over y3(G3) it is mentioned to train first over y1 and y2.
     lg.fit(x_train, y2_train)
     x_train, x_test, y3_train, y3_test = train_test_split(x, y3, train_size=0.80, random_state=0)
     predictions3 = lg.predict(x_test)
-    st.title("Scatter Plot Of Y1 Test values VS Predicted Values")
+    rf_predictions3 = rf.predict(x_test)
+    st.title("Scatter Plot Of Y1 Test values VS Predicted Values | LinearRegression Model")
     st.title("X = Y3 Test, Y=Prediction3")
     fig3 = px.scatter(x=y3_test,y=predictions3)
     st.plotly_chart(fig3)
 
+    st.title("Scatter Plot Of Y1 Test values VS Predicted Values | RandomForestRegressor")
+    st.title("X = Y3 Test, Y=RF_Prediction3")
+    rf_fig3 = px.scatter(x=y3_test, y=rf_predictions3)
+    st.plotly_chart(rf_fig3)
 
 
     # Let see how much error we were having
@@ -215,6 +238,10 @@ def main():
     st.title(f"RMSE Y1 Test, Prediction1:  {np.sqrt(metrics.mean_squared_error(y1_test, predictions1))}")
     st.title(f"RMSE Y2 Test, Prediction2:  {np.sqrt(metrics.mean_squared_error(y2_test, predictions2))}")
     st.title(f"RMSE Y3 Test, Prediction3:  {np.sqrt(metrics.mean_squared_error(y3_test, predictions3))}")
+
+    st.title(f'{r2_score(y1_test,(predictions1*0.3 + predictions2*0.3 + predictions3*0.3))}')
+    st.title(f'{r2_score(y2_test, (predictions1 * 0.3 + predictions2 * 0.3 + predictions3 * 0.3))}')
+    st.title(f'{r2_score(y3_test, (predictions1 * 0.3 + predictions2 * 0.3 + predictions3 * 0.3))}')
 
 if __name__ == '__main__':
     main()
