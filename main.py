@@ -66,7 +66,7 @@ def main():
         "sex == @sex & famsize == @famsize & Pstatus == @pstatus & Mjob == @mjob & Fjob == @fjob"
     )
 
-    st.title(f"Columns not Present In The DataSet Total {len(df_selection.columns)}")
+    st.title(f"Columns  Present In The DataSet Total {len(df_selection.columns)}")
     st.write(df_selection.columns)
     st.title("Complete View Of Selected DataSet")
     st.dataframe(df_selection)
