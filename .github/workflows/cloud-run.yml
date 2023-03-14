@@ -38,7 +38,7 @@ jobs:
         with:
           context: .
           push: false
-          tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest
+          tags: gcr.io/${{ env.PROJECT_ID }}${{ env.IMAGE_NAME }}:latest
 
       - name: Configure the Cloud Run service
         run: |
@@ -50,7 +50,7 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@main
         with:
           service-name: ${{ env.SERVICE_NAME }}
-          image: gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest
+          image: gcr.io/${{ env.PROJECT_ID }}${{ env.IMAGE_NAME }}:latest
           region: ${{ env.REGION }}
           platform: managed
           memory: 256Mi
