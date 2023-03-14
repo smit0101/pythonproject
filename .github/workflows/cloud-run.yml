@@ -1,45 +1,54 @@
-name: Build and Deploy to Cloud Run
-
+name: Deploy to Google Cloud Run
 
 on:
   push:
     branches:
-    - master
+      - main
 
 env:
-  PROJECT_ID: ${{ secrets.RUN_PROJECT }}
-  RUN_REGION: us-central1
-  SERVICE_NAME: pythonproject
+  PROJECT_ID: ${{secrets.RUN_PROJECT}}
+  SERVICE_NAME: pyhtonproject
+  REGION: us-central1
+  IMAGE_NAME: pythonproject
 
 jobs:
-  setup-build-deploy:
-    name: Setup, Build, and Deploy
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    # Setup gcloud CLI
-    #- uses: google-github-actions/auth@v0
-      #with:
-        #version: '290.0.1'
-        #service_account_key: ${{ env.RUN_SA_KEY }}
-        #project_id: ${{ env.RUN_PROJECT }}
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          version: '342.0.0'
+          project_id: ${{ env.PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
 
-    # Build and push image to Google Container Registry
-    - name: Build
-      run: |-
-        gcloud builds submit \
-          --quiet \
-          --project \
-          --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
-    # Deploy image to Cloud Run
-    - name: Deploy
-      run: |-
-        gcloud run deploy "$SERVICE_NAME" \
-          --quiet \
-          --region "$RUN_REGION" \
-          --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
-          --platform "managed" \
-          --allow-unauthenticated
+      - name: Configure Docker
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build the Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: false
+          tags: gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: Configure the Cloud Run service
+        run: |
+          gcloud config set project ${{ env.PROJECT_ID }}
+          gcloud config set run/region ${{ env.REGION }}
+          gcloud services enable run.googleapis.com
+
+      - name: Deploy the container to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@main
+        with:
+          service-name: ${{ env.SERVICE_NAME }}
+          image: gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest
+          region: ${{ env.REGION }}
+          platform: managed
+          memory: 256Mi
+          max-instances: 1
+          concurrency: 80
+          service-account: ${{ secrets.GCP_SA_EMAIL }}
