@@ -49,10 +49,6 @@ jobs:
           gcloud config set run/region ${{ env.REGION }}
           gcloud services enable run.googleapis.com
 
-      - name: Authenticate with Google Cloud using a service account
-        run: gcloud auth activate-service-account --key-file=${{ secrets.GCP_SA_KEY }}
-
-
       - name: Deploy the container to Cloud Run
         uses: google-github-actions/deploy-cloudrun@main
         with:
