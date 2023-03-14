@@ -7,7 +7,7 @@ on:
 
 env:
   PROJECT_ID: ${{secrets.RUN_PROJECT}}
-  SERVICE_NAME: pyhtonproject
+  SERVICE_NAME: pythonproject
   REGION: us-central1
   IMAGE_NAME: pythonproject
 
