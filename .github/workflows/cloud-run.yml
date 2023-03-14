@@ -52,7 +52,7 @@ jobs:
       - name: Deploy the container to Cloud Run
         uses: google-github-actions/deploy-cloudrun@main
         with:
-          service-name: ${{ env.SERVICE_NAME }}
+          service-name: pythonproject
           image: gcr.io/${{ env.PROJECT_ID }}${{ env.IMAGE_NAME }}:latest
           region: ${{ env.REGION }}
           platform: managed
