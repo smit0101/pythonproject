@@ -30,10 +30,11 @@ jobs:
           project_id: ${{ env.PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Authenticate with Google Cloud service
-        run: gcloud auth activate-service-account ACCOUNT
-      - name: Authenticate with Google Cloud service
-        run:  gcloud config set account ACCOUNT
+      - name: Set up credentials
+        run: echo ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }} > /tmp/creds.json
+
+      - name: Authenticate with GCP
+        run: gcloud auth activate-service-account --key-file /tmp/creds.json
 
 
       - name: Configure Docker
