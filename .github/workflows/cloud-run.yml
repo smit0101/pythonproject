@@ -53,7 +53,7 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@main
         with:
           service-name: pythonproject
-          image: gcr.io/${{ env.PROJECT_ID }}${{ env.IMAGE_NAME }}:latest
+          image: gcr.io/${{ env.PROJECT_ID }}${{ env.IMAGE_NAME }}:latest --service pythonproject
           region: ${{ env.REGION }}
           platform: managed
           memory: 256Mi
