@@ -42,12 +42,12 @@ jobs:
           context: .
           push: false
           tags: gcr.io/${{ env.PROJECT_ID }}${{ env.IMAGE_NAME }}:latest
-
-      - name: Configure the Cloud Run service
-        run: |
-          gcloud config set project ${{ env.PROJECT_ID }}
-          gcloud config set run/region ${{ env.REGION }}
-          gcloud services enable run.googleapis.com
+#
+#      - name: Configure the Cloud Run service
+#        run: |
+#          gcloud config set project ${{ env.PROJECT_ID }}
+#          gcloud config set run/region ${{ env.REGION }}
+#          gcloud services enable run.googleapis.com
 
       - name: Deploy the container to Cloud Run
         uses: google-github-actions/deploy-cloudrun@main
