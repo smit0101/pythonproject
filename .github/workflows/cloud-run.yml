@@ -49,14 +49,29 @@ jobs:
 #          gcloud config set run/region ${{ env.REGION }}
 #          gcloud services enable run.googleapis.com
 
-      - name: Deploy the container to Cloud Run
-        uses: google-github-actions/deploy-cloudrun@main
-        with:
-          service-name: pythonproject
-          image: gcr.io/${{ env.PROJECT_ID }}${{ env.IMAGE_NAME }}:latest --service pythonproject
-          region: ${{ env.REGION }}
-          platform: managed
-          memory: 256Mi
-          max-instances: 1
-          concurrency: 80
-          service-account: ${{ secrets.GCP_SA_EMAIL }}
+#      - name: Deploy the container to Cloud Run
+#        uses: google-github-actions/deploy-cloudrun@main
+#        with:
+#          service-name: pythonproject
+#          image: gcr.io/${{ env.PROJECT_ID }}${{ env.IMAGE_NAME }}:latest --service pythonproject
+#          region: ${{ env.REGION }}
+#          platform: managed
+#          memory: 256Mi
+#          max-instances: 1
+#          concurrency: 80
+#          service-account: ${{ secrets.GCP_SA_EMAIL }}
+
+      - name: Build
+        run: |-
+          gcloud builds submit \
+          --quiet \
+          --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
+    # Deploy image to Cloud Run
+      - name: Deploy
+        run: |-
+          gcloud run deploy "$SERVICE_NAME" \
+          --quiet \
+          --region "$REGION" \
+          --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
+          --platform "managed" \
+          --allow-unauthenticated
