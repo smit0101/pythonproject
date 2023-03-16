@@ -1,0 +1,7 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/elated-strength-380605/pythonproject:$SHORT_SHA', '.']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/elated-strength-380605/pythonproject:$SHORT_SHA']
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['beta', 'run', 'deploy', 'cloud-run-demo', '--image=gcr.io/elated-strength-380605/pythonproject:$SHORT_SHA', '--region=us-central1','--platform=managed','--allow-unauthenticated']
