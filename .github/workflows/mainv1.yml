@@ -26,7 +26,7 @@ jobs:
         file: ./Dockerfile
 
     - name: Deploy to Cloud Run
-      uses: GoogleCloudPlatform/github-actions/cloud-run@main
+      uses: GoogleCloudPlatform/github-actions/cloud-run@v1
       with:
         service_name: pythonproject
         image_uri: gcr.io/$PROJECT_ID/pythonproject:$GITHUB_SHA
