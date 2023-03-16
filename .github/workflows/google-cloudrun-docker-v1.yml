@@ -53,6 +53,8 @@ env:
   GAR_LOCATION: us-central1 # TODO: update Artifact Registry location
   SERVICE: pythonproject # TODO: update Cloud Run service name
   REGION: us-central1 # TODO: update Cloud Run service region
+  DOCKER_USER: '${{secrets.DOCKER_USERNAME}}'
+  DOCKER_PASSWORD: '${{secrets.DOCKER_PASSWORD}}'
 
 jobs:
   deploy:
@@ -95,8 +97,14 @@ jobs:
           password: '${{secrets.DOCKER_PASSWORD}}'
           #registry: 'https://hub.docker.com/repository/docker/smitmark01/pythonproject/general'
 
+      - name: Docker Login
+        run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
       - name: Build and Push Container
-        run: docker build -t pythonproject ././ && docker push smitmark01/pythonproject:latest
+        run: docker build -t pythonproject:$(date +%s) ././
+
+      - name: Docker Push
+        run: docker push smitmark01/pythonproject
 
       # END - Docker auth and build
 
