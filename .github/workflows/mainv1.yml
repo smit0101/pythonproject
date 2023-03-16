@@ -16,7 +16,7 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
     - name: Configure Google Cloud SDK
-      uses: google-github-actions/setup-gcloud@master
+      uses: google-github-actions/setup-gcloud@v1
       with:
           version: '330.0.0'
           project_id: ${{secrets.RUN_PROJECT}}
