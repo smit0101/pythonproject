@@ -81,14 +81,45 @@ jobs:
         with:
            credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-      - name: Deploy to Cloud Run
-        id: deploy
-        uses: google-github-actions/deploy-cloudrun@v0
+#      - name: Deploy to Cloud Run
+#        id: deploy
+#        uses: google-github-actions/deploy-cloudrun@v0
+#        with:
+#          service: ${{ env.SERVICE }}
+#          region: ${{ env.REGION }}
+#          # NOTE: If required, update to the appropriate source folder
+#          source: ./
+      ####
+      - name: Configure Docker
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build the Docker image
+        uses: docker/build-push-action@v2
         with:
-          service: ${{ env.SERVICE }}
+          context: .
+          push: false
+          tags: gcr.io/${{ env.PROJECT_ID }}${{ env.IMAGE_NAME }}:latest
+
+      - name: Configure the Cloud Run service
+        run: |
+          gcloud config set project ${{ env.PROJECT_ID }}
+          gcloud config set run/region ${{ env.REGION }}
+          gcloud services enable run.googleapis.com
+
+      - name: Deploy the container to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@main
+        with:
+          service-name: pythonproject
+          image: gcr.io/${{ env.PROJECT_ID }}${{ env.IMAGE_NAME }}:latest --service pythonproject
           region: ${{ env.REGION }}
-          # NOTE: If required, update to the appropriate source folder
-          source: ./
+          platform: managed
+          memory: 256Mi
+          max-instances: 1
+          concurrency: 80
+          service-account: ${{ secrets.GCP_SA_EMAIL }}
+
+
+
 
       # If required, use the Cloud Run url output in later steps
       - name: Show Output
