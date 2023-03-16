@@ -93,7 +93,7 @@ jobs:
         with:
           username: '${{secrets.DOCKER_USERNAME}}'
           password: '${{secrets.DOCKER_PASSWORD}}'
-          registry: '${{ env.GAR_LOCATION }}-docker.pkg.dev'
+          registry: 'https://hub.docker.com/repository/docker/smitmark01/pythonproject/general'
 
       - name: Build and Push Container
         run: |-
