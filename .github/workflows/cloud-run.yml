@@ -3,7 +3,7 @@ name: Deploy to Google Cloud Run
 on:
   push:
     branches:
-      - master
+      - main
 
 env:
   PROJECT_ID: ${{secrets.RUN_PROJECT}}
@@ -61,17 +61,4 @@ jobs:
 #          concurrency: 80
 #          service-account: ${{ secrets.GCP_SA_EMAIL }}
 
-      - name: Build
-        run: |-
-          gcloud builds submit \
-          --quiet \
-          --tag "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA"
-    # Deploy image to Cloud Run
-      - name: Deploy
-        run: |-
-          gcloud run deploy "$SERVICE_NAME" \
-          --quiet \
-          --region "$REGION" \
-          --image "gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA" \
-          --platform "managed" \
-          --allow-unauthenticated
+
