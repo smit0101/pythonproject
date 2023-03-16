@@ -100,11 +100,7 @@ jobs:
           push: false
 
 
-      - name: Configure the Cloud Run service
-        run: |
-          gcloud config set project ${{ env.PROJECT_ID }}
-          gcloud config set run/region ${{ env.REGION }}
-          gcloud services enable run.googleapis.com
+
 
       - name: Deploy the container to Cloud Run
         uses: google-github-actions/deploy-cloudrun@main
