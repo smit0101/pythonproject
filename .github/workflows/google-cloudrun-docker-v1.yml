@@ -103,8 +103,11 @@ jobs:
       - name: Build and Push Container
         run: docker build -t pythonproject:$(date +%s) ././
 
+      - name: List Images
+        run: docker images
+
       - name: Docker Push
-        run: docker push smitmark01/pythonproject
+        run: docker push smitmark01/pythonproject:new
 
       # END - Docker auth and build
 
