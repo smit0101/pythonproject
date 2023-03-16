@@ -103,10 +103,10 @@ jobs:
 
 
       - name: Deploy the container to Cloud Run
-        uses: google-github-actions/deploy-cloudrun@main
+        uses: google-github-actions/deploy-cloudrun@v1
         with:
           service-name: pythonproject
-          image: gcr.io/${{ env.PROJECT_ID }}${{ env.IMAGE_NAME }}:latest --service pythonproject
+          image: gcr.io/${{ env.PROJECT_ID }}${{ env.IMAGE_NAME }}:latest
           region: ${{ env.REGION }}
           platform: managed
           memory: 256Mi
