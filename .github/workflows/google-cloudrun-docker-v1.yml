@@ -101,7 +101,7 @@ jobs:
         run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
       - name: Build and Push Container
-        run: docker build -t pythonproject:$(date +%s) ././
+        run: docker build -t pythonproject:new ././
 
       - name: List Images
         run: docker images
