@@ -96,7 +96,7 @@ jobs:
           #registry: 'https://hub.docker.com/repository/docker/smitmark01/pythonproject/general'
 
       - name: Build and Push Container
-        run: echo '$(docker images)'
+        run: docker images
 
       # END - Docker auth and build
 
