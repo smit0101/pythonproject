@@ -8,4 +8,4 @@ COPY * /app/
 RUN python3 -m unittest test_main.py
 ENTRYPOINT ["streamlit", "run"]
 #ENTRYPOINT ["pyhton"]
-CMD ["main.py", "--server.port 8080"]
+CMD ["main.py", "--server.port=8080"]
