@@ -101,10 +101,13 @@ jobs:
         run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
 
       - name: Build and Push Container
-        run: docker build -t pythonproject:new ././
-
+        run: docker build -t pythonproject:main ././
+      - name: Docker Tag
+        run: docker tag pythonproject:main ${{secrets.DOCKER_USER}}/pythonproject:main
       - name: List Images
         run: docker images
+      - name:
+        run: docker push smitmark01/pythonproject:main
 
 
 
