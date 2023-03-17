@@ -103,7 +103,7 @@ jobs:
       - name: Build and Push Container
         run: docker build -t pythonproject:main ././
       - name: Docker Tag
-        run: docker tag pythonproject:main ${{secrets.DOCKER_USER}}/pythonproject:main
+        run: docker tag pythonproject:main $DOCKER_USER/pythonproject:main
       - name: List Images
         run: docker images
       - name: Docker Push
