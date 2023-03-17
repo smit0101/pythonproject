@@ -116,7 +116,7 @@ jobs:
         with:
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
-          # NOTE: If using a pre-built image, update the image name here
+          # NOTE: If using a pre-built image, update the image name here.
           image: smitmark01/pythonproject:v5
 
       # If required, use the Cloud Run url output in later steps
