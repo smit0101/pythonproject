@@ -106,7 +106,7 @@ jobs:
         run: docker tag pythonproject:main ${{secrets.DOCKER_USER}}/pythonproject:main
       - name: List Images
         run: docker images
-      - name:
+      - name: Docker Push
         run: docker push smitmark01/pythonproject:main
 
 
